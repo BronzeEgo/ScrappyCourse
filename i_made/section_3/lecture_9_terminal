@@ -1,0 +1,153 @@
+#This loads scrapy
+scrapy 
+
+#This loads the scrapy shell
+scrapy shell 
+
+#fetch will fetch whatever site you want to practice on. It also gives useful status codes.
+In [1]: fetch ('http://quotes.toscrape.com/') #fetch will fetch whatever site you want to practice on. It also gives useful status codes.
+
+#Here, I took a look at the code in Chrome for the site. I found that the H1 element was what I wanted. I then took a look at it.
+In [2]: response.xpath('//h1')
+Out[2]: [<Selector xpath='//h1' data='<h1>\n                    <a href="/" sty'>]
+
+#I now take a closer look at the 'a href' element since it contains the text I want
+In [3]: response.xpath('//h1/a')
+Out[3]: [<Selector xpath='//h1/a' data='<a href="/" style="text-decoration: none'>]
+
+#Since what I really want is the text, I move forward with that
+In [5]: response.xpath('//h1/a/text()')
+Out[5]: [<Selector xpath='//h1/a/text()' data='Quotes to Scrape'>]
+
+#Now I want to extract it.
+#This will extract it as a list.
+In [6]: response.xpath('//h1/a/text()').extract()
+Out[6]: ['Quotes to Scrape']
+
+#Since there is only one object, I may not want it in a list. In that case, i can get the first item only (as a str) by doing this:
+In [7]: response.xpath('//h1/a/text()').extract_first()
+Out[7]: 'Quotes to Scrape'
+
+#now I decide I want the tags on the right of the page
+#I take a look at 'inspect' in Chrome
+#I notice that all the tags have the class 'tag', so I look for that
+#The *// will find every instance of the class
+#@class='' will look for the classes
+#if I wanted, lets say 'id' instead, I could do @id=""
+In [8]: response.xpath('//*[@class="tag"]')
+Out[8]:
+[<Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/change/page/1/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/deep-thoughts/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/thinking/page/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/world/page/1/"'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/abilities/page'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/choices/page/1'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/inspirational/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/life/page/1/">'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/live/page/1/">'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/miracle/page/1'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/miracles/page/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/aliteracy/page'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/books/page/1/"'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/classic/page/1'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/humor/page/1/"'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/be-yourself/pa'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/inspirational/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/adulthood/page'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/success/page/1'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/value/page/1/"'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/life/page/1/">'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/love/page/1/">'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/edison/page/1/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/failure/page/1'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/inspirational/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/paraphrased/pa'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/misattributed-'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/humor/page/1/"'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/obvious/page/1'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" href="/tag/simile/page/1/'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 28px" h'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 26px" h'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 26px" h'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 24px" h'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 22px" h'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 14px" h'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 10px" h'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 8px" hr'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 8px" hr'>,
+ <Selector xpath='//*[@class="tag"]' data='<a class="tag" style="font-size: 6px" hr'>]
+#unfortunately, this is far more than the 10 or so tags I am looking for. I'll need to try something else...
+
+#I notice that the class 'tag' is inside a span with a class called 'tag-item'. 
+#Maybe that will have what I want...
+In [9]: response.xpath('//*[@class="tag-item"]')
+Out[9]:
+[<Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>,
+ <Selector xpath='//*[@class="tag-item"]' data='<span class="tag-item">\n            <a c'>]
+#Now that looks like more of what I want!
+#I didn't do this, but if I knew the exact size I wanted, I could use len to find the number of items in the list output
+#This would be useful on a much larger dataset...
+len(response.xpath('//*[@class="tag-item"]')) #10
+
+#Let's see what I get if I extract() it:
+In [10]: response.xpath('//*[@class="tag-item"]').extract()
+Out[10]:
+['<span class="tag-item">\n            <a class="tag" style="font-size: 28px" href="/tag/love/">love</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 26px" href="/tag/inspirational/">inspirational</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 26px" href="/tag/life/">life</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 24px" href="/tag/humor/">humor</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 22px" href="/tag/books/">books</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 14px" href="/tag/reading/">reading</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 10px" href="/tag/friendship/">friendship</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 8px" href="/tag/friends/">friends</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 8px" href="/tag/truth/">truth</a>\n            </span>',
+ '<span class="tag-item">\n            <a class="tag" style="font-size: 6px" href="/tag/simile/">simile</a>\n            </span>']
+ #Those are exactly the tags I am looking for. I think I've hit paydirt!
+
+ #Still, I only need the text, not the html attached to it.
+ In [11]: response.xpath('//*[@class="tag-item"]/text()').extract()
+Out[11]:
+['\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ',
+ '\n            ']
+ #Well...That didn't work, but I'm getting closer.
+
+#I was getting the text from the span, not the a tag in it...
+In [12]: response.xpath('//*[@class="tag-item"]/a/text()').extract()
+Out[12]:
+['love',
+ 'inspirational',
+ 'life',
+ 'humor',
+ 'books',
+ 'reading',
+ 'friendship',
+ 'friends',
+ 'truth',
+ 'simile']
+ #Now I got what I came for! 
