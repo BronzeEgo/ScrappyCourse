@@ -1,0 +1,59 @@
+#Using XPath with Scrapy
+
+#XPath is a language for selecting nodes from an XML document (works with html as well)
+
+#I want to use the shell to use XPath selectors on a mock HTML document
+scrapy shell
+
+#I'll need to import selector
+from scrapy.selector import Selector
+
+#I then do something that makes little sense to me, but it allows me to
+#take HTML and use Selector on it.
+#I first put html_doc = ''' at the top of the html document (foo.html)
+#I then put ''' at the bottom of foo.html
+#I think this allows me to copy the section I want to mess with directly into the terminal?!
+#I then paste it into the terminal using right-click + enter
+#The output is:
+html_doc = '''
+... <html>
+...
+... <head>
+...   <title>Title of the page</title>
+... </head>
+...
+... <body>
+...   <h1>H1 Tag</h1>
+...   <h2>H2 Tag with <a href="#">link</a></h2>
+...   <p>First Paragraph</p>
+...   <p>Second Paragraph</p>
+... </body>
+...
+... </html>
+... '''
+#END output
+
+#I then assign Selector and the document to a variable for use...
+sel = Selector(text=html_doc)
+(no output)
+
+#To confirm it is good, I type:
+sel.extract()
+#and get
+'<html>\n\n<head>\n  <title>Title of the page</title>\n</head>\n\n<body>\n  <h1>H1 Tag</h1>\n  <h2>H2 Tag with <a href="#">link</a></h2>\n  <p>First Paragraph</p>\n  <p>Second Paragraph</p>\n</body>\n\n</html>'
+
+VSCode terminal is acting weird. The first terminal (from the previous section) says
+'scrapy' and gives the nice 
+[1]input
+[1]output formatting
+
+Anytime I try to open scrapy in a new terminal, it defaults to 'Python', which does not give the nive formatting.
+This is actually what I am requesting since I am using 'Python: Create Terminal'
+What I think I want is 'scrapy: Create Terminal'
+I need to figure out how to add that...
+
+Back to the video...He is basically covering what he already covered about XPath...
+If I want to go through the whole html tree, I start with '/' rather than '//' and go through each item that way.
+It may be necessary.
+I'm not going to take any more notes for now. I will revisit the short video if necessary...
+
